@@ -184,7 +184,7 @@ class NakamaGame {
                 const match = await this.socket.joinMatch(matched.match_id, matched.token);
                 this.matchId = match.match_id;
                 this.addMessage('success', `🏆 Joined match: ${this.matchId}`);
-                this.updateStatus('success', 'In Match');
+                this.updateStatus('connected', 'In Match');
                 // Show game UI
                 this.showGameUI();
                 

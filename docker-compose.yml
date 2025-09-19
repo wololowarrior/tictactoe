@@ -16,7 +16,7 @@ services:
       - pgdata:/var/lib/postgresql/data
 
   nakama:
-    build: .
+    build: ./game-server
     depends_on:
       - postgres
     entrypoint:
@@ -43,7 +43,12 @@ services:
     restart: unless-stopped
     volumes:
       - nakama-data:/nakama/data
-
+  game-client:
+    build: ./game-client
+    ports:
+      - "3000:80"
+    depends_on:
+      - nakama
 volumes:
   pgdata:
   nakama-data:
