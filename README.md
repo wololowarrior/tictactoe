@@ -67,18 +67,6 @@ lila_client/
 - **Styling**: CSS Grid for game board, CSS animations
 - **Real-time**: WebSocket connection to Nakama
 
-## 🎮 Terminal Client (Alternative)
-
-The original terminal client still works:
-```bash
-node nakama.js
-```
-
-Commands:
-- `move <row> <col>` - Make a move (e.g., `move 1 2`)
-- `msg <text>` - Send a message
-- `quit` - Exit
-
 ## 🐛 Troubleshooting
 
 ### Can't Connect
