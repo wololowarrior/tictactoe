@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@heroiclabs/nakama-js": "^2.8.0",
+    "ws": "^8.18.3"
+  }
+}

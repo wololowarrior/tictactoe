@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nakama Tic-Tac-Toe</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 5px;
+            margin: 20px auto;
+            justify-content: center;
+            background: #333;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .cell {
+            background: white;
+            border: none;
+            font-size: 2em;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            color: #333;
+        }
+
+        .cell:hover:not(:disabled) {
+            background: #f0f0f0;
+            transform: scale(1.05);
+        }
+
+        .cell:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .cell.x {
+            color: #e74c3c;
+        }
+
+        .cell.o {
+            color: #3498db;
+        }
+
+        .status-panel {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .connection-panel {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .input-group {
+            margin: 10px 0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        .input-group select {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            background: white;
+            color: #333;
+        }
+
+        button {
+            background: #2ecc71;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: background 0.3s ease;
+            margin: 5px;
+        }
+
+        button:hover:not(:disabled) {
+            background: #27ae60;
+        }
+
+        button:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+        }
+
+        .disconnect {
+            background: #e74c3c;
+        }
+
+        .disconnect:hover:not(:disabled) {
+            background: #c0392b;
+        }
+
+        .messages {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            height: 200px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 0.9em;
+            margin: 20px 0;
+        }
+
+        .message {
+            margin: 5px 0;
+            padding: 5px;
+            border-radius: 3px;
+        }
+
+        .message.info {
+            background: rgba(52, 152, 219, 0.3);
+        }
+
+        .message.success {
+            background: rgba(46, 204, 113, 0.3);
+        }
+
+        .message.error {
+            background: rgba(231, 76, 60, 0.3);
+        }
+
+        .message.game {
+            background: rgba(155, 89, 182, 0.3);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .status-connected {
+            background: #2ecc71;
+        }
+
+        .status-disconnected {
+            background: #e74c3c;
+        }
+
+        .status-matching {
+            background: #f39c12;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .leaderboard-table {
+            width: 100%;
+            color: white;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            border-collapse: collapse;
+            overflow: hidden;
+        }
+
+        .leaderboard-table th {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 12px;
+            text-align: center;
+            font-weight: bold;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .leaderboard-table td {
+            padding: 10px 12px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .leaderboard-table tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .leaderboard-table tr:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .leaderboard-table th:first-child,
+        .leaderboard-table td:first-child {
+            width: 20%;
+        }
+
+        .leaderboard-table th:nth-child(2),
+        .leaderboard-table td:nth-child(2) {
+            width: 50%;
+        }
+
+        .leaderboard-table th:last-child,
+        .leaderboard-table td:last-child {
+            width: 30%;
+        }
+
+        .timer-bar {
+            width: 100%;
+            height: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+
+        .timer-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #e74c3c 0%, #f39c12 50%, #2ecc71 100%);
+            transition: width 0.5s ease;
+            border-radius: 5px;
+        }
+
+        .timer-warning {
+            animation: pulse-red 1s infinite;
+        }
+
+        @keyframes pulse-red {
+            0% { background: #e74c3c; }
+            50% { background: #c0392b; }
+            100% { background: #e74c3c; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Nakama Tic-Tac-Toe</h1>
+        
+        <!-- Connection Panel -->
+        <div class="connection-panel">
+            <h3>🔌 Connection</h3>
+            <div class="input-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" value="player1" placeholder="your-username">
+            </div>
+            <div class="input-group">
+                <label for="game-mode">Game Mode:</label>
+                <select id="game-mode">
+                    <option value="classic">🎯 Classic Mode - No time limit</option>
+                    <option value="timed">⏰ Timed Mode - 30 seconds per turn</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="server-url">Server URL:</label>
+                <input type="text" id="server-url" value="127.0.0.1:7350" placeholder="localhost:7350">
+            </div>
+            <div class="input-group">
+                <label for="device-id">Device ID:</label>
+                <input type="text" id="device-id" value="web-client-001" placeholder="your-device-id">
+            </div>
+            <button id="connect-btn">Connect</button>
+            <button id="disconnect-btn" class="disconnect hidden">Disconnect</button>
+            <div>
+                <span class="status-indicator status-disconnected" id="status-indicator"></span>
+                <span id="connection-status">Disconnected</span>
+            </div>
+        </div>
+
+        <!-- Game Status Panel -->
+        <div class="status-panel hidden" id="game-panel">
+            <h3>🎯 Game Status</h3>
+            <div id="game-info">
+                <button id="new-game-btn" class="hidden">New Game</button>
+                <p><strong>Your Symbol:</strong> <span id="my-symbol">-</span></p>
+                <p><strong>Current Turn:</strong> <span id="current-turn">-</span></p>
+                <p><strong>Players:</strong> <span id="player-count">0</span>/2</p>
+                <p><strong>Game Mode:</strong> <span id="current-game-mode">-</span></p>
+                <p><strong>Game State:</strong> <span id="game-state">Waiting for players...</span></p>
+                <div id="timer-display" class="hidden">
+                    <p><strong>⏰ Time Remaining:</strong> <span id="time-remaining">30</span> seconds</p>
+                    <div class="timer-bar">
+                        <div class="timer-progress" id="timer-progress"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tic-Tac-Toe Board -->
+        <div class="game-board hidden" id="game-board">
+            <button class="cell" data-row="0" data-col="0"></button>
+            <button class="cell" data-row="0" data-col="1"></button>
+            <button class="cell" data-row="0" data-col="2"></button>
+            <button class="cell" data-row="1" data-col="0"></button>
+            <button class="cell" data-row="1" data-col="1"></button>
+            <button class="cell" data-row="1" data-col="2"></button>
+            <button class="cell" data-row="2" data-col="0"></button>
+            <button class="cell" data-row="2" data-col="1"></button>
+            <button class="cell" data-row="2" data-col="2"></button>
+        </div>
+
+        <!-- Leaderboard Panel -->
+        <div class="status-panel" id="leaderboard-panel">
+            <h3>🏆 Leaderboard</h3>
+            <table id="leaderboard-table" class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Username</th>
+                        <th>Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Leaderboard rows will be inserted here -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Messages/Logs -->
+        <div class="messages" id="messages">
+            <div class="message info">🌟 Welcome to Nakama Tic-Tac-Toe! Connect to start playing.</div>
+        </div>
+    </div>
+
+    <!-- Load Nakama JS from local CommonJS file -->
+    <script src="nakama-browser.js"></script>
+    
+    <!-- Load game logic -->
+    <script src="game.js"></script>
+</body>
+</html>
