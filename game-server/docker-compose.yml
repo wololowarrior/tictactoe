@@ -13,7 +13,7 @@ services:
       - "5432:5432"
       - "8080:8080"
     volumes:
-      - data:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/data
 
   nakama:
     build: .
@@ -41,6 +41,9 @@ services:
       - "7350:7350"
       - "7351:7351"
     restart: unless-stopped
+    volumes:
+      - nakama-data:/nakama/data
 
 volumes:
-  data:
+  pgdata:
+  nakama-data:

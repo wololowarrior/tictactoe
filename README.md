@@ -17,13 +17,13 @@ A beautiful, interactive web interface for playing real-time tic-tac-toe using N
 
 ### 1. Start Nakama Server
 ```bash
-cd /Users/harshil.gupta/go/src/lila
+cd game-server
 docker-compose up --build
 ```
 
 ### 2. Start Web Server
 ```bash
-cd /Users/harshil.gupta/go/src/lila_client
+cd game-client
 node server.js
 ```
 
@@ -32,10 +32,12 @@ Go to: http://localhost:3000
 
 ### 4. Play!
 1. Enter server details (default: `127.0.0.1:7350`)
-2. Enter a device ID (any unique string)
-3. Click "Connect"
-4. Wait for matchmaking (need 2 players)
-5. Click cells to make moves!
+2. Enter Username, this will be attached to the device ID
+3. Choose the game mode, timed or classic.
+4. Enter a device ID (any unique string)
+5. Click "Connect"
+6. Wait for matchmaking (need 2 players)
+7. Click cells to make moves!
 
 ## 🎯 How to Play
 
@@ -51,21 +53,40 @@ Go to: http://localhost:3000
 ## 📁 File Structure
 
 ```
-lila_client/
+game-client/
 ├── index.html      # Main UI layout and styles
 ├── game.js         # Game logic and Nakama integration  
 ├── server.js       # Simple HTTP server
 ├── nakama.js       # Original terminal client (still works)
-└── README.md       # This file
+```
+
+```
+game-server/
+├── docker-compose.yml  # Nakama server setup
+├── main.go            # Custom server logic (if any)
+├── match.go           # Match handler logic and game logic
+├── go.mod             # Go module file
+├── go.sum             # Go dependencies
+
 ```
 
 ## 🔧 Technical Details
 
+- FrontEnd
 - **Frontend**: Vanilla HTML/CSS/JavaScript
 - **Nakama Client**: CDN version for browser compatibility
 - **Server**: Simple Node.js HTTP server
 - **Styling**: CSS Grid for game board, CSS animations
 - **Real-time**: WebSocket connection to Nakama
+
+- Backend
+- **Nakama**: Open-source multiplayer server
+- **Match Handler**: Custom Go code for tic-tac-toe logic
+- **Database**: PostgreSQL for persistence
+- **Containerization**: Docker and Docker Compose for easy setup 
+- **Ports**: Nakama (7350, 7351), PostgreSQL (5432), Web Server (3000)
+- **Data Persistence**: Docker volumes for Nakama and PostgreSQL data
+
 
 ## 🐛 Troubleshooting
 
