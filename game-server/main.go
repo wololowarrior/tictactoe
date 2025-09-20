@@ -98,7 +98,7 @@ func InitModule(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runti
 
 	// Register RPC for top N leaderboard
 	if err := initializer.RegisterRpc("GetTopPlayers", func(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, payload string) (string, error) {
-		// Parse N from payload (default 10)
+
 		n := 10
 		if payload != "" {
 			var req struct {
@@ -119,13 +119,28 @@ func InitModule(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runti
 			Username string `json:"username"`
 			OwnerId  string `json:"owner_id"`
 			Score    int64  `json:"score"`
+			Symbol   string `json:"symbol,omitempty"`
+			Mode     string `json:"mode,omitempty"`
+		}
+
+		type Metadata struct {
+			Symbol string `json:"symbol"`
+			Mode   string `json:"mode"`
 		}
 		var players []Player
 		for _, r := range records {
+			var meta Metadata
+			if r.GetMetadata() != "" {
+				if err := json.Unmarshal([]byte(r.GetMetadata()), &meta); err != nil {
+					logger.Error("metadata unmarshal error: %v", err)
+				}
+			}
 			players = append(players, Player{
 				Username: r.GetUsername().GetValue(),
 				OwnerId:  r.GetOwnerId(),
 				Score:    r.GetScore(),
+				Symbol:   meta.Symbol,
+				Mode:     meta.Mode,
 			})
 		}
 		respBytes, _ := json.Marshal(players)

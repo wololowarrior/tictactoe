@@ -444,11 +444,6 @@ func (m *Match) writeToLeaderboard(ctx context.Context, nk runtime.NakamaModule,
 	// Timed mode gets bonus points
 	if matchState.GameMode == GameModeTimed {
 		score = 2 // Timed mode is worth more points
-
-		// Bonus points for remaining time
-		if matchState.TimeRemaining > 0 {
-			score += matchState.TimeRemaining / 10 // 1 extra point per 10 seconds remaining
-		}
 	}
 
 	// Get username

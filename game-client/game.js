@@ -523,9 +523,10 @@ class NakamaGame {
         if (!this.leaderboardTable) return;
         const tbody = this.leaderboardTable.querySelector('tbody');
         tbody.innerHTML = '';
+
         players.forEach((player, idx) => {
             const tr = document.createElement('tr');
-            tr.innerHTML = `<td>${idx + 1}</td><td>${player.username || player.owner_id}</td><td>${player.score}</td>`;
+            tr.innerHTML = `<td>${idx + 1}</td><td>${player.username || player.owner_id}</td><td>${player.score}</td><td>${player.symbol}</td><td>${player.mode}</td>`;
             tbody.appendChild(tr);
         });
     }
