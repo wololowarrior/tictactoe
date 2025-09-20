@@ -86,17 +86,6 @@ func InitModule(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runti
 		return err
 	}
 
-	// Keep the generic lobby handler for backward compatibility
-	if err := initializer.RegisterMatch("lobby", func(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule) (runtime.Match, error) {
-		logger.Info("=== CREATING NEW MATCH INSTANCE ===")
-		match := NewMatch()
-		logger.Info("=== MATCH INSTANCE CREATED SUCCESSFULLY ===")
-		return match, nil
-	}); err != nil {
-		logger.Error("unable to register: %v", err)
-		return err
-	}
-
 	id := "TicTacToeLeaderboard"
 	authoritative := true
 	sort := "desc"

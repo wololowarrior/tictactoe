@@ -16,6 +16,7 @@ services:
       - pgdata:/var/lib/postgresql/data
 
   nakama:
+    container_name: game-server
     build: ./game-server
     depends_on:
       - postgres
@@ -44,6 +45,7 @@ services:
     volumes:
       - nakama-data:/nakama/data
   game-client:
+    container_name: game-client
     build: ./game-client
     ports:
       - "3000:80"
