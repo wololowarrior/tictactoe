@@ -39,6 +39,22 @@ class NakamaGame {
             timerProgress: document.getElementById('timer-progress'),
             messages: document.getElementById('messages')
         };
+        // Device ID logic: generate and store if not present
+        let deviceId = localStorage.getItem('deviceId');
+        if (!deviceId) {
+            deviceId = 'web-' + Math.random().toString(36).substr(2, 16) + '-' + Date.now();
+            localStorage.setItem('deviceId', deviceId);
+        }
+        this.elements.deviceId.value = deviceId;
+
+
+        let username = localStorage.getItem('username');
+        if (!username) {
+            username = 'Player-' + Math.random().toString(36).substr(2, 5);
+            localStorage.setItem('username', username);
+        }
+        this.elements.username.value = username;
+
         this.elements.newGameBtn = document.getElementById('new-game-btn');
         this.elements.newGameBtn.addEventListener('click', () => {
             this.elements.newGameBtn.classList.add('hidden');
