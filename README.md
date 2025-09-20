@@ -77,19 +77,19 @@ game-server/
 
 ## 🔧 Technical Details
 
-- FrontEnd
+### FrontEnd
 - **Frontend**: Vanilla HTML/CSS/JavaScript
 - **Nakama Client**: CDN version for browser compatibility
-- **Server**: Simple Node.js HTTP server
+- **Server**: Nginx HTTP server
 - **Styling**: CSS Grid for game board, CSS animations
 - **Real-time**: WebSocket connection to Nakama
 
-- Backend
+### Backend
 - **Nakama**: Open-source multiplayer server
 - **Match Handler**: Custom Go code for tic-tac-toe logic
 - **Database**: PostgreSQL for persistence
 - **Containerization**: Docker and Docker Compose for easy setup 
-- **Ports**: Nakama (7350, 7351), PostgreSQL (5432), Web Server (3000)
+- **Ports**: Nakama (7350, 7351), PostgreSQL (5432)
 - **Data Persistence**: Docker volumes for Nakama and PostgreSQL data
 
 
@@ -113,9 +113,7 @@ game-server/
 ## 🚀 Next Steps
 
 - Add player names/avatars
-- Add game history/scores
 - Add spectator mode
-- Add different game modes
 - Add sound effects
 - Add mobile optimizations
 
