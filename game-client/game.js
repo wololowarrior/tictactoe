@@ -55,6 +55,14 @@ class NakamaGame {
         }
         this.elements.username.value = username;
 
+    // Remember username if changed
+    this.elements.username.addEventListener('change', (e) => {
+        const newUsername = e.target.value.trim();
+        if (newUsername) {
+            localStorage.setItem('username', newUsername);
+        }
+    });
+
         this.elements.newGameBtn = document.getElementById('new-game-btn');
         this.elements.newGameBtn.addEventListener('click', () => {
             this.elements.newGameBtn.classList.add('hidden');
@@ -62,7 +70,7 @@ class NakamaGame {
             this.startMatchmaking();
         });
 
-        this.leaderboardPanel = document.getElementById('leaderboard-panel');
+        this.leaderboardPanel = document.getElementById('leaderboard-panel');ß
         this.leaderboardTable = document.getElementById('leaderboard-table');
 
         // Add event listeners
