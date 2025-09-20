@@ -289,7 +289,10 @@
             <h3>🔌 Connection</h3>
             <div class="input-group">
                 <label for="username">Username:</label>
-                <input type="text" id="username" value="player1" placeholder="your-username">
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <input type="text" id="username" value="player1" placeholder="your-username" style="flex: 1;">
+                    <button type="button" id="generate-username" title="Generate new random username" style="padding: 8px 12px; font-size: 0.9em;">🔄</button>
+                </div>
             </div>
             <div class="input-group">
                 <label for="game-mode">Game Mode:</label>

@@ -55,6 +55,22 @@ class NakamaGame {
         }
         this.elements.username.value = username;
 
+            // Add button logic to generate new username
+            const generateBtn = document.getElementById('generate-username');
+            if (generateBtn) {
+                generateBtn.addEventListener('click', () => {
+                    const newUsername = 'Player-' + Math.random().toString(36).substr(2, 5);
+                    this.elements.username.value = newUsername;
+                    this.elements.username.dispatchEvent(new Event('change'));
+                });
+            }
+        
+            this.elements.username.addEventListener('change', (e) => {
+                const newUsername = e.target.value.trim();
+                if (newUsername) {
+                    localStorage.setItem('username', newUsername);
+                }
+            });
         this.elements.newGameBtn = document.getElementById('new-game-btn');
         this.elements.newGameBtn.addEventListener('click', () => {
             this.elements.newGameBtn.classList.add('hidden');
