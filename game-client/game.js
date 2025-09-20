@@ -315,6 +315,16 @@ class NakamaGame {
         if (data.board_state) {
             this.updateBoard(data.board_state);
         }
+
+        // Highlight winning strike if provided
+        if (data.winning_strike && Array.isArray(data.winning_strike)) {
+            const cells = document.querySelectorAll('.cell');
+            data.winning_strike.forEach(idx => {
+                if (cells[idx]) {
+                    cells[idx].classList.add('winning-strike');
+                }
+            });
+        }
         
         // Hide timer if it was showing
         this.hideTimer();

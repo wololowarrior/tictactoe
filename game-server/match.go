@@ -362,10 +362,11 @@ func (m *Match) MatchLoop(ctx context.Context, logger runtime.Logger, db *sql.DB
 			if matchState.TicTacToe[win[0]] == symbol && matchState.TicTacToe[win[1]] == symbol && matchState.TicTacToe[win[2]] == symbol {
 				// We have a winner
 				winData := map[string]interface{}{
-					"message":     fmt.Sprintf("We have a winner! %s wins in %s mode!", symbol, matchState.GameMode),
-					"winner_id":   message.GetUserId(),
-					"board_state": matchState.TicTacToe,
-					"game_mode":   matchState.GameMode,
+					"message":        fmt.Sprintf("We have a winner! %s wins in %s mode!", symbol, matchState.GameMode),
+					"winner_id":      message.GetUserId(),
+					"board_state":    matchState.TicTacToe,
+					"game_mode":      matchState.GameMode,
+					"winning_strike": []int{win[0], win[1], win[2]},
 				}
 				winBytes, _ := json.Marshal(winData)
 				dispatcher.BroadcastMessage(5, winBytes, nil, nil, true)
