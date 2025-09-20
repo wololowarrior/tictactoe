@@ -18,6 +18,10 @@ Try it out here: [Nakama Tic-Tac-Toe Web UI](http://3.109.202.60)
 - Just fill in your username and a unique device ID
 - Click "Connect" and wait for matchmaking (need 2 players)
 
+## Demo video
+- Watch [here](https://drive.google.com/file/d/1uULMFHV4tsWMlRFd_FeB-MY2Ho6VDA0P/view?usp=sharing)
+
+
 ## 🚀 Quick Start
 
 ### 1. Start Nakama Server
