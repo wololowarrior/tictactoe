@@ -17,6 +17,7 @@ A beautiful, interactive web interface for playing real-time tic-tac-toe using N
 Try it out here: [Nakama Tic-Tac-Toe Web UI](http://3.109.202.60)
 - A username and device ID are prefilled for you, and put in local storage for future visits.
 - If you'd like to change them, just fill in your username and a unique device ID
+- **If you're playing with yourself, use a separate browser for player 2.**
 - Click "Connect" and wait for matchmaking (need 2 players)
 
 ## Demo video
