@@ -12,6 +12,7 @@ class NakamaGame {
         this.isMyTurn = false;
         this.gameEnded = false;
         this.playerList = [];
+        this.user_id_opponent = null;
 
         this.initializeUI();
     }
@@ -173,6 +174,7 @@ class NakamaGame {
                 case 2: // Player joined
                     this.handlePlayerJoined(data);
                     this.playerList.push(data.user_id);
+
                     break;
                     
                 case 3: // Player left
@@ -277,6 +279,12 @@ class NakamaGame {
         }
         
         if (this.playerCount === 2) {
+            // Find opponent username
+            let opponentName = data.opponent || "Opponent";
+            this.elements.opponentName = document.getElementById('opponent-name');
+            if (this.elements.opponentName) {
+                this.elements.opponentName.textContent = opponentName;
+            }
             this.elements.gameState.textContent = "Game Started!";
             this.addMessage('success', '🚀 Game started! Make your move!');
         }

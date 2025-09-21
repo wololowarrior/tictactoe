@@ -165,63 +165,66 @@ func (m *Match) MatchJoin(ctx context.Context, logger runtime.Logger, db *sql.DB
 	}
 
 	// Assign symbols to players if not already assigned
-	symbols := []string{"X", "O"}
-	for i, player := range matchState.Players {
-		if _, exists := matchState.PlayerSymbols[player.GetUserId()]; !exists {
-			matchState.PlayerSymbols[player.GetUserId()] = symbols[i%2]
-			logger.Info("Assigned symbol %s to player %s", symbols[i%2], player.GetUserId())
-			// Set the first player to join as the current turn
-			if matchState.CurrentTurn == "" {
-				matchState.CurrentTurn = player.GetUserId()
-				logger.Info("It's now player %s's turn", matchState.CurrentTurn)
+	if len(matchState.Players) == 2 {
+		symbols := []string{"X", "O"}
+		for i, player := range matchState.Players {
+			if _, exists := matchState.PlayerSymbols[player.GetUserId()]; !exists {
+				matchState.PlayerSymbols[player.GetUserId()] = symbols[i%2]
+				logger.Info("Assigned symbol %s to player %s", symbols[i%2], player.GetUserId())
+				// Set the first player to join as the current turn
+				if matchState.CurrentTurn == "" {
+					matchState.CurrentTurn = player.GetUserId()
+					logger.Info("It's now player %s's turn", matchState.CurrentTurn)
 
-				// Start timer for timed mode
-				if matchState.GameMode == GameModeTimed {
-					matchState.CurrentTurnStart = time.Now().Unix()
-					matchState.TimeRemaining = matchState.TurnTimeLimit
-					logger.Info("Started timer for timed mode: %d seconds", matchState.TurnTimeLimit)
+					// Start timer for timed mode
+					if matchState.GameMode == GameModeTimed {
+						matchState.CurrentTurnStart = time.Now().Unix()
+						matchState.TimeRemaining = matchState.TurnTimeLimit
+						logger.Info("Started timer for timed mode: %d seconds", matchState.TurnTimeLimit)
+					}
 				}
 			}
 		}
-	}
 
-	// Send messages to players
-	for _, presence := range presences {
-		// Welcome message
-		messageData := map[string]interface{}{
-			"message":      fmt.Sprintf("Welcome to %s mode!", matchState.GameMode),
-			"player_count": len(matchState.Players),
-			"game_mode":    matchState.GameMode,
+		// Send messages to players
+		for _, presence := range matchState.Players {
+			// Welcome message
+			messageData := map[string]interface{}{
+				"message":      fmt.Sprintf("Welcome to %s mode!", matchState.GameMode),
+				"player_count": len(matchState.Players),
+				"game_mode":    matchState.GameMode,
+			}
+
+			// Add timed mode specific info
+			if matchState.GameMode == GameModeTimed {
+				messageData["turn_time_limit"] = matchState.TurnTimeLimit
+			}
+
+			messageBytes, _ := json.Marshal(messageData)
+			dispatcher.BroadcastMessage(1, messageBytes, []runtime.Presence{presence}, nil, true)
+
+			// Game state announcement
+			announceData := map[string]interface{}{
+				"message":       "New player joined!",
+				"user_id":       presence.GetUserId(),
+				"username":      presence.GetUsername(),
+				"total_players": len(matchState.Players),
+				"opponent":      getOpponentName(presence.GetUserId(), matchState),
+				"current_turn":  matchState.CurrentTurn,
+				"board_state":   matchState.TicTacToe,
+				"symbol":        matchState.PlayerSymbols[presence.GetUserId()],
+				"game_mode":     matchState.GameMode,
+			}
+
+			// Add timed mode specific data
+			if matchState.GameMode == GameModeTimed {
+				announceData["turn_time_limit"] = matchState.TurnTimeLimit
+				announceData["time_remaining"] = matchState.TimeRemaining
+			}
+
+			announceBytes, _ := json.Marshal(announceData)
+			dispatcher.BroadcastMessage(2, announceBytes, []runtime.Presence{presence}, nil, true)
 		}
-
-		// Add timed mode specific info
-		if matchState.GameMode == GameModeTimed {
-			messageData["turn_time_limit"] = matchState.TurnTimeLimit
-		}
-
-		messageBytes, _ := json.Marshal(messageData)
-		dispatcher.BroadcastMessage(1, messageBytes, []runtime.Presence{presence}, nil, true)
-
-		// Game state announcement
-		announceData := map[string]interface{}{
-			"message":       "New player joined!",
-			"user_id":       presence.GetUserId(),
-			"username":      presence.GetUsername(),
-			"total_players": len(matchState.Players),
-			"current_turn":  matchState.CurrentTurn,
-			"board_state":   matchState.TicTacToe,
-			"symbol":        matchState.PlayerSymbols[presence.GetUserId()],
-			"game_mode":     matchState.GameMode,
-		}
-
-		// Add timed mode specific data
-		if matchState.GameMode == GameModeTimed {
-			announceData["turn_time_limit"] = matchState.TurnTimeLimit
-			announceData["time_remaining"] = matchState.TimeRemaining
-		}
-
-		announceBytes, _ := json.Marshal(announceData)
-		dispatcher.BroadcastMessage(2, announceBytes, matchState.Players, nil, true)
 	}
 
 	return matchState
@@ -436,6 +439,16 @@ func (m *Match) MatchLoop(ctx context.Context, logger runtime.Logger, db *sql.DB
 	// Clear actions after processing
 	matchState.PlayerActions = make(map[string][]byte)
 	return matchState
+}
+
+// getOpponentName returns the username of the opponent for a given userId in the match state
+func getOpponentName(userId string, matchState *MatchState) string {
+	for _, p := range matchState.Players {
+		if p.GetUserId() != userId {
+			return p.GetUsername()
+		}
+	}
+	return ""
 }
 
 // writeToLeaderboard writes the winner to the leaderboard with mode-specific scoring
